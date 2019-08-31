@@ -31,11 +31,11 @@ namespace CalculatorTests
         }
 
         [Fact]
-        void should_support_a_maximum_of_two_numbers()
+        void should_support_a_more_than_two_numbers()
         {
-            var result = calculator.Add("4,5,12");
+            var result = calculator.Add("4,5,6");
             Assert.Equal(CalculationStatus.Ok, result.Status);
-            Assert.Equal(9, result.Sum);
+            Assert.Equal(15, result.Sum);
             Assert.Null(result.CalculationException);
         }
 

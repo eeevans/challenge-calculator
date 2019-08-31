@@ -40,12 +40,7 @@ namespace CalculatorService
             var calcTerms = delimitedInput.Split(',')
                                .Select(s => s.ToInt()).ToArray();
 
-            return LimitToTwoTerms(calcTerms); 
-        }
-
-        private static IEnumerable<int> LimitToTwoTerms(IEnumerable<int> calcTerms)
-        {
-            return calcTerms.Take(2).ToArray();
+            return calcTerms; 
         }
     }
 }
