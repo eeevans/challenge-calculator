@@ -37,10 +37,12 @@ namespace CalculatorService
         /// <returns>An array of the numbers for the calculator to operate on</returns>
         private IEnumerable<int> ParseCalcArgs(string delimitedInput)
         {
-            var calcTerms = delimitedInput.Split(',')
-                               .Select(s => s.ToInt()).ToArray();
+            IEnumerable<string> calcTerms = new []{delimitedInput};
+            calcTerms = calcTerms.SelectMany(s => s.Split(_delimiters));
 
-            return calcTerms; 
+            return calcTerms.Select(s => s.ToInt()).ToArray(); 
         }
+        private readonly char[] _delimiters = { ',', '\n' };
+
     }
 }

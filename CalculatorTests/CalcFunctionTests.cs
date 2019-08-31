@@ -56,5 +56,14 @@ namespace CalculatorTests
             Assert.Equal(0, result.Sum);
             Assert.Null(result.CalculationException);
         }
+
+        [Fact]
+        void should_alternatively_allow_newline_as_delimiter()
+        {
+            var result = calculator.Add("1\n2,3");
+            Assert.Equal(CalculationStatus.Ok, result.Status);
+            Assert.Equal(6, result.Sum);
+            Assert.Null(result.CalculationException);
+        }
     }
 }

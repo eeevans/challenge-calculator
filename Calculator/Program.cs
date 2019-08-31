@@ -6,9 +6,11 @@ namespace Calculator
 {
     class Program
     {
+        private const string Prompt = "Enter numbers to add separated by a comma or newline (ex. 2,2):";
+
         static void Main(string[] args)
         {
-            Console.WriteLine("Enter two numbers to add separated by a comma (ex. 2,2):");
+            Console.WriteLine(Prompt);
             var promptResponse = Console.ReadLine();
 
             var calculator = new CalculationCoordinator();
