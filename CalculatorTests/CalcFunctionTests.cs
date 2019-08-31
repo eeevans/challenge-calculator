@@ -82,5 +82,14 @@ namespace CalculatorTests
             Assert.Equal(8, result.Sum);
             Assert.Null(result.CalculationException);
         }
+
+        [Fact]
+        void should_support_one_custom_delimiter_of_one_char_length()
+        {
+            var result = calculator.Add("//;\n2;5");
+            Assert.Equal(CalculationStatus.Ok, result.Status);
+            Assert.Equal(7, result.Sum);
+            Assert.Null(result.CalculationException);
+        }
     }
 }

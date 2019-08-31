@@ -38,7 +38,10 @@ namespace CalculatorService
         private IEnumerable<int> ParseCalcArgs(string delimitedInput)
         {
             IEnumerable<string> calcTerms = new []{delimitedInput};
-            calcTerms = calcTerms.SelectMany(s => s.Split(_delimiters));
+
+            var delimiters = builtInDelimiters.Union(GetCustomDelimiter(delimitedInput)).ToArray();
+
+            calcTerms = calcTerms.SelectMany(s => s.Split(delimiters));
             var termValues = calcTerms.Select(s => s.ToInt()).ToArray();
 
             var (valid, termList) = ValidateTerms(termValues);
@@ -48,7 +51,15 @@ namespace CalculatorService
             return termList.ToArray(); 
         }
 
-        private readonly char[] _delimiters = { ',', '\n' };
+        private IEnumerable<char> GetCustomDelimiter(string delimitedInput)
+        {
+            return delimitedInput.StartsWith(_customDelimiterToken)
+                ? delimitedInput.Substring(_customDelimiterToken.Length, 1).ToCharArray()
+                : Enumerable.Empty<char>();
+        }
+
+        private readonly char[] builtInDelimiters = { ',', '\n' };
+        private readonly string _customDelimiterToken = "//";
 
         private (bool Valid, IEnumerable<int> termList) ValidateTerms(IEnumerable<int> calcTerms)
         {
