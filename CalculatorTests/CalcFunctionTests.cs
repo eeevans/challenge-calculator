@@ -15,9 +15,9 @@ namespace CalculatorTests
         [Fact]
         void should_add_one_number()
         {
-            var result = calculator.Add("5000");
+            var result = calculator.Add("5");
             Assert.Equal(CalculationStatus.Ok, result.Status);
-            Assert.Equal(5000, result.Sum);
+            Assert.Equal(5, result.Sum);
             Assert.Null(result.CalculationException);
         }
 
@@ -72,6 +72,15 @@ namespace CalculatorTests
             var result = calculator.Add("1\n2,3,-4");
             Assert.Equal(CalculationStatus.Error, result.Status);
             Assert.NotNull(result.CalculationException);
+        }
+
+        [Fact]
+        void should_ignore_numbers_greater_than_1000()
+        {
+            var result = calculator.Add("2,1001,6");
+            Assert.Equal(CalculationStatus.Ok, result.Status);
+            Assert.Equal(8, result.Sum);
+            Assert.Null(result.CalculationException);
         }
     }
 }
