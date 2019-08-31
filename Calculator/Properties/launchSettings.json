@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "Calculator": {
+      "commandName": "Project",
+      "commandLineArgs": "5,4"
+    }
+  }
+}
