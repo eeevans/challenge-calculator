@@ -65,5 +65,13 @@ namespace CalculatorTests
             Assert.Equal(6, result.Sum);
             Assert.Null(result.CalculationException);
         }
+
+        [Fact]
+        void should_throw_exception_and_reject_negative_numbers()
+        {
+            var result = calculator.Add("1\n2,3,-4");
+            Assert.Equal(CalculationStatus.Error, result.Status);
+            Assert.NotNull(result.CalculationException);
+        }
     }
 }

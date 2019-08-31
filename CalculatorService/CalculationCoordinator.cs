@@ -39,10 +39,23 @@ namespace CalculatorService
         {
             IEnumerable<string> calcTerms = new []{delimitedInput};
             calcTerms = calcTerms.SelectMany(s => s.Split(_delimiters));
+            var termValues = calcTerms.Select(s => s.ToInt()).ToArray();
 
-            return calcTerms.Select(s => s.ToInt()).ToArray(); 
+            var (valid, invalidTerms) = ValidateTerms(termValues);
+            if (valid)
+                throw new InvalidOperationException($"Invalid negative numbers: {string.Join(", ", invalidTerms.Select(i => i.ToString()))}");
+
+            return termValues; 
         }
+
         private readonly char[] _delimiters = { ',', '\n' };
+
+        private (bool Valid,IEnumerable<int> invalidTerms) ValidateTerms(IEnumerable<int> calcTerms)
+        {
+            var negativeTerms = calcTerms.Where(t => t < 0);
+            var distinctNegativeTerms = negativeTerms.Distinct().ToArray();
+            return negativeTerms.Any() ? (true, distinctNegativeTerms) : (false, new int[] { });
+        }
 
     }
 }

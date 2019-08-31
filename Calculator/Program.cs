@@ -20,7 +20,7 @@ namespace Calculator
                 Console.WriteLine(result.Sum);
             else
             {
-                Console.WriteLine(result.CalculationException);
+                Console.WriteLine(result.CalculationException.Message);
             }
         }
     }
