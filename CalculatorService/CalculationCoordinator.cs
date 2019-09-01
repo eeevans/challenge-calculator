@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using CalculatorService.Core.Extensions;
 
 namespace CalculatorService
@@ -38,10 +39,13 @@ namespace CalculatorService
         private IEnumerable<int> ParseCalcArgs(string delimitedInput)
         {
             IEnumerable<string> calcTerms = new []{delimitedInput};
+            var (variableSizeCustomDelimiter, nonVariableSizeCustomDelimitedInput) = GetVariableLengthDelimiter(delimitedInput);
+            calcTerms = nonVariableSizeCustomDelimitedInput.Split(variableSizeCustomDelimiter);
 
-            var delimiters = builtInDelimiters.Union(GetCustomDelimiter(delimitedInput)).ToArray();
-
+            var customDelimiter = GetCustomDelimiter(nonVariableSizeCustomDelimitedInput).ToArray();
+            var delimiters = _builtInDelimiters.Union(customDelimiter).ToArray();
             calcTerms = calcTerms.SelectMany(s => s.Split(delimiters));
+
             var termValues = calcTerms.Select(s => s.ToInt()).ToArray();
 
             var (valid, termList) = ValidateTerms(termValues);
@@ -53,19 +57,36 @@ namespace CalculatorService
 
         private IEnumerable<char> GetCustomDelimiter(string delimitedInput)
         {
+            var variableLengthDelimiter = GetVariableLengthDelimiter(delimitedInput);
             return delimitedInput.StartsWith(_customDelimiterToken)
                 ? delimitedInput.Substring(_customDelimiterToken.Length, 1).ToCharArray()
                 : Enumerable.Empty<char>();
         }
 
-        private readonly char[] builtInDelimiters = { ',', '\n' };
+        private (string customDelimiter, string nonCustomDelimitedInput) GetVariableLengthDelimiter(string delimitedInput)
+        {
+            var pattern = new Regex(_variableLengthDelimiterPattern);
+            var match = pattern.Match(delimitedInput);
+            if (match.Success == false)
+                return (String.Empty, delimitedInput);
+
+            var delimiterPattern = new Regex(_variableLengthDelimiterValuePattern);
+            var valueMatch = delimiterPattern.Match(match.Value);
+            return valueMatch.Success == true ? (valueMatch.Value, delimitedInput.Replace(match.Value, string.Empty))
+                : (string.Empty, delimitedInput);
+        }
+
+        private readonly char[] _builtInDelimiters = { ',', '\n' };
         private readonly string _customDelimiterToken = "//";
+        private readonly string _variableLengthDelimiterPattern = @"\/\/\[[^\[\]]+\]";
+        private readonly string _variableLengthDelimiterValuePattern = @"[^\[\]\/]+";
 
         private (bool Valid, IEnumerable<int> termList) ValidateTerms(IEnumerable<int> calcTerms)
         {
-            var negativeTerms = calcTerms.Where(t => t < 0);
+            var terms = calcTerms.ToArray();
+            var negativeTerms = terms.Where(t => t < 0).ToArray();
             var distinctNegativeTerms = negativeTerms.Distinct().ToArray();
-            var validTerms = calcTerms.Where(t => t <= 1000).ToArray();
+            var validTerms = terms.Where(t => t <= 1000).ToArray();
             return negativeTerms.Any() ? (true, distinctNegativeTerms) : (false, validTerms);
         }
 
