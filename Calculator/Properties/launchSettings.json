@@ -3,6 +3,7 @@
     "Calculator": {
       "commandName": "Project",
       "commandLineArgs": ""
+      //"commandLineArgs": "-Help"
       //"commandLineArgs": "-DenyNegativeNumbers=false -AlternateDelimiter=; -MaxNumber=100"
     }
   }

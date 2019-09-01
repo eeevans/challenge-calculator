@@ -30,7 +30,7 @@ namespace Calculator
                 Console.WriteLine(Prompt);
                 var promptResponse = Console.ReadLine();
 
-                var result = calculator.Add(promptResponse);
+                var result = calculator.Calculate(promptResponse);
 
                 Console.WriteLine(result.Status == CalculationStatus.Ok
                     ? result.Formula

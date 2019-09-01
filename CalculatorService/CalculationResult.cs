@@ -3,16 +3,16 @@ using CalculatorService.Primatives;
 
 namespace CalculatorService
 {
-    public class AdditionResult
+    public class CalculationResult
     {
-        public AdditionResult(int sum, string formula)
+        public CalculationResult(int answer, string formula)
         {
             Status = CalculationStatus.Ok;
-            Sum = sum;
+            Answer = answer;
             Formula = formula;
         }
 
-        public AdditionResult(Exception e)
+        public CalculationResult(Exception e)
         {
             Status = CalculationStatus.Error;
             CalculationException = e;
@@ -20,7 +20,7 @@ namespace CalculatorService
 
         public string Formula { get; }
 
-        public int Sum { get; }
+        public int Answer { get; }
         public CalculationStatus Status { get; }
         public Exception CalculationException { get; }
     }

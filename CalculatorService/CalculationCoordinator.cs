@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using CalculatorService.Contracts;
@@ -14,7 +13,7 @@ namespace CalculatorService
         /// </summary>
         /// <param name="delimitedInput"></param>
         /// <returns>Result of addition operation</returns>
-        AdditionResult Add(string delimitedInput);
+        CalculationResult Calculate(string delimitedInput);
     }
 
     /// <summary>
@@ -23,10 +22,13 @@ namespace CalculatorService
     public class CalculationCoordinator : ICalculationCoordinator
     {
         private readonly IDelimitedInputParser _parser;
+        private readonly IStrategyChooser<ICalculationStrategy> _chooser;
 
-        public CalculationCoordinator(IDelimitedInputParser parser)
+        public CalculationCoordinator(IDelimitedInputParser parser,
+            IStrategyChooser<ICalculationStrategy> chooser)
         {
             _parser = parser;
+            _chooser = chooser;
         }
 
         /// <summary>
@@ -34,24 +36,23 @@ namespace CalculatorService
         /// </summary>
         /// <param name="delimitedInput"></param>
         /// <returns>Result of addition operation</returns>
-        public AdditionResult Add(string delimitedInput)
+        public CalculationResult Calculate(string delimitedInput)
         {
             try
             {
-                var addends = _parser.ParseCalcArgs(delimitedInput).ToArray();
+                var operation = delimitedInput.Substring(0, 1).ToLower();
+                if (!"asmd".Contains(operation))
+                    throw new InvalidOperationException("Operation missing at start of input!");
 
-                return new AdditionResult(addends.Sum(), GetCalculationFormula(addends));
+                var strategy = _chooser.Choose(c => c.CanHandle(operation));
+                var addends = _parser.ParseCalcArgs(delimitedInput.Substring(1)).ToArray();
+
+                return strategy.Calculate(addends);
             }
             catch (Exception e)
             {
-                return new AdditionResult(e);
+                return new CalculationResult(e);
             }
-        }
-
-        private string GetCalculationFormula(IEnumerable<int> terms)
-        {
-            var addends = terms;
-            return $"{string.Join("+", addends)} = {addends.Sum()}";
         }
     }
 }
