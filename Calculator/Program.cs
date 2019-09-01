@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Text;
 using CalculatorService;
 using CalculatorService.Primatives;
 
@@ -6,21 +8,26 @@ namespace Calculator
 {
     class Program
     {
+        private const string ExitPrompt = "Press Ctrl-C to Exit";
         private const string Prompt = "Enter numbers to add separated by a comma or newline (ex. 2,2):";
 
         static void Main(string[] args)
         {
-            Console.WriteLine(Prompt);
-            var promptResponse = Console.ReadLine();
-
-            var calculator = new CalculationCoordinator();
-            var result = calculator.Add(promptResponse);
-
-            if (result.Status == CalculationStatus.Ok)
-                Console.WriteLine(result.Formula);
-            else
+            Console.WriteLine(ExitPrompt);
+            while (true)
             {
-                Console.WriteLine(result.CalculationException.Message);
+                Console.WriteLine(Prompt);
+                var promptResponse = Console.ReadLine();
+
+                var calculator = new CalculationCoordinator();
+                var result = calculator.Add(promptResponse);
+
+                if (result.Status == CalculationStatus.Ok)
+                    Console.WriteLine(result.Formula);
+                else
+                {
+                    Console.WriteLine(result.CalculationException.Message);
+                }
             }
         }
     }
