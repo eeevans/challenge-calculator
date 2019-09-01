@@ -6,6 +6,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="structuremap" Version="4.7.1" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\CalculatorService\CalculatorService.csproj" />
   </ItemGroup>
 

@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 using CalculatorService;
+using CalculatorService.Contracts;
 using CalculatorService.Primatives;
+using StructureMap;
 
 namespace Calculator
 {
@@ -13,10 +15,14 @@ namespace Calculator
 
         static void Main(string[] args)
         {
-            var configuration = new CalculatorConfiguration();
-            var builder = new ConfigurationBuilder();
-            builder.ProcessConfiguration(args, configuration);
-            var calculator = new CalculationCoordinator(configuration);
+            IContainer container = new CalculatorBootstrapper().Configure();
+            var configuration = container.GetInstance<ICalculatorConfiguration>();
+            var builder = container.GetInstance<IConfigurationBuilder>();
+            if (builder.ProcessConfiguration(args, configuration) == false)
+                return;
+
+            var calculator = container.With<ICalculatorConfiguration>(configuration)
+                    .GetInstance<ICalculationCoordinator>();
 
             Console.WriteLine(ExitPrompt);
             while (true)

@@ -2,7 +2,8 @@
   "profiles": {
     "Calculator": {
       "commandName": "Project",
-      "commandLineArgs": "-DenyNegativeNumbers=false -AlternateDelimiter=; -MaxNumber=100"
+      "commandLineArgs": ""
+      //"commandLineArgs": "-DenyNegativeNumbers=false -AlternateDelimiter=; -MaxNumber=100"
     }
   }
 }
