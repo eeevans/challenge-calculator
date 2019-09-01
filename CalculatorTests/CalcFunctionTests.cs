@@ -12,6 +12,7 @@ namespace CalculatorTests
             calculator = new CalculationCoordinator();
         }
 
+        // Step 1
         [Fact]
         void should_add_one_number()
         {
@@ -27,15 +28,6 @@ namespace CalculatorTests
             var result = calculator.Add("4,5");
             Assert.Equal(CalculationStatus.Ok, result.Status);
             Assert.Equal(9, result.Sum);
-            Assert.Null(result.CalculationException);
-        }
-
-        [Fact]
-        void should_support_a_more_than_two_numbers()
-        {
-            var result = calculator.Add("4,5,6");
-            Assert.Equal(CalculationStatus.Ok, result.Status);
-            Assert.Equal(15, result.Sum);
             Assert.Null(result.CalculationException);
         }
 
@@ -57,6 +49,17 @@ namespace CalculatorTests
             Assert.Null(result.CalculationException);
         }
 
+        // Step 2
+        [Fact]
+        void should_support_more_than_two_numbers()
+        {
+            var result = calculator.Add("4,5,6");
+            Assert.Equal(CalculationStatus.Ok, result.Status);
+            Assert.Equal(15, result.Sum);
+            Assert.Null(result.CalculationException);
+        }
+
+        // Step 3
         [Fact]
         void should_alternatively_allow_newline_as_delimiter()
         {
@@ -66,6 +69,7 @@ namespace CalculatorTests
             Assert.Null(result.CalculationException);
         }
 
+        // Step 4
         [Fact]
         void should_throw_exception_and_reject_negative_numbers()
         {
@@ -74,6 +78,7 @@ namespace CalculatorTests
             Assert.NotNull(result.CalculationException);
         }
 
+        // Step 5
         [Fact]
         void should_ignore_numbers_greater_than_1000()
         {
@@ -83,6 +88,7 @@ namespace CalculatorTests
             Assert.Null(result.CalculationException);
         }
 
+        // Step 6
         [Fact]
         void should_support_one_custom_delimiter_of_one_char_length()
         {
@@ -92,6 +98,7 @@ namespace CalculatorTests
             Assert.Null(result.CalculationException);
         }
 
+        // Step 7
         [Fact]
         void should_support_custom_delimiter_of_variable_char_length()
         {
@@ -101,6 +108,7 @@ namespace CalculatorTests
             Assert.Null(result.CalculationException);
         }
 
+        // Step 8
         [Fact]
         void should_support_multiple_custom_delimiter_of_variable_char_length()
         {
@@ -108,6 +116,17 @@ namespace CalculatorTests
             Assert.Equal(CalculationStatus.Ok, result.Status);
             Assert.Equal(110, result.Sum);
             Assert.Null(result.CalculationException);
+        }
+
+        // Stretch 1
+        [Fact]
+        void should_display_formula_uses_to_calculate_result()
+        {
+            var result = calculator.Add("2,4,rrrr,1001,6");
+            Assert.Equal(CalculationStatus.Ok, result.Status);
+            Assert.Equal(12, result.Sum);
+            Assert.Null(result.CalculationException);
+            Assert.Equal("2+4+0+0+6 = 12", result.Formula);
         }
     }
 }

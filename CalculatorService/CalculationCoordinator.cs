@@ -20,14 +20,20 @@ namespace CalculatorService
         {
             try
             {
-                var addends = ParseCalcArgs(delimitedInput);
+                var addends = ParseCalcArgs(delimitedInput).ToArray();
 
-                return new AdditionResult(addends.Sum());
+                return new AdditionResult(addends.Sum(), GetCalculationFormula(addends));
             }
             catch (Exception e)
             {
                 return new AdditionResult(e);
             }
+        }
+
+        private string GetCalculationFormula(IEnumerable<int> terms)
+        {
+            var addends = terms;
+            return $"{string.Join("+", addends)} = {addends.Sum()}";
         }
 
         /// <summary>
@@ -103,7 +109,7 @@ namespace CalculatorService
             var terms = calcTerms.ToArray();
             var negativeTerms = terms.Where(t => t < 0).ToArray();
             var distinctNegativeTerms = negativeTerms.Distinct().ToArray();
-            var validTerms = terms.Where(t => t <= 1000).ToArray();
+            var validTerms = terms.Select(t => t <= 1000 ? t : 0).ToArray();
             return negativeTerms.Any() ? (true, distinctNegativeTerms) : (false, validTerms);
         }
 

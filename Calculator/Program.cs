@@ -17,7 +17,7 @@ namespace Calculator
             var result = calculator.Add(promptResponse);
 
             if (result.Status == CalculationStatus.Ok)
-                Console.WriteLine(result.Sum);
+                Console.WriteLine(result.Formula);
             else
             {
                 Console.WriteLine(result.CalculationException.Message);

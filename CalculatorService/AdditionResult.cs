@@ -5,10 +5,11 @@ namespace CalculatorService
 {
     public class AdditionResult
     {
-        public AdditionResult(int sum)
+        public AdditionResult(int sum, string formula)
         {
             Status = CalculationStatus.Ok;
             Sum = sum;
+            Formula = formula;
         }
 
         public AdditionResult(Exception e)
@@ -17,8 +18,10 @@ namespace CalculatorService
             CalculationException = e;
         }
 
-        public int Sum { get; set; }
-        public CalculationStatus Status { get; set; }
-        public Exception CalculationException { get; set; }
+        public string Formula { get; }
+
+        public int Sum { get; }
+        public CalculationStatus Status { get; }
+        public Exception CalculationException { get; }
     }
 }
