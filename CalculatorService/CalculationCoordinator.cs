@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using CalculatorService.Contracts;
 using CalculatorService.Core.Extensions;
 
 namespace CalculatorService
@@ -11,6 +12,13 @@ namespace CalculatorService
     /// </summary>
     public class CalculationCoordinator
     {
+        private readonly ICalculatorConfiguration _configuration;
+
+        public CalculationCoordinator(ICalculatorConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
         /// <summary>
         /// Responsible for addition operation
         /// </summary>
@@ -44,16 +52,18 @@ namespace CalculatorService
         /// <returns>An array of the numbers for the calculator to operate on</returns>
         private IEnumerable<int> ParseCalcArgs(string delimitedInput)
         {
-            IEnumerable<string> calcTerms = new []{delimitedInput};
+            IEnumerable<string> calcTerms = new[] { delimitedInput };
             var (variableSizeCustomDelimiters, nonVariableSizeCustomDelimitedInput) = GetVariableLengthDelimiters(delimitedInput);
-            calcTerms = new[] {nonVariableSizeCustomDelimitedInput};
+            calcTerms = new[] { nonVariableSizeCustomDelimitedInput };
             foreach (var variableSizeCustomDelimiter in variableSizeCustomDelimiters)
             {
                 calcTerms = calcTerms.SelectMany(s => s.Split(variableSizeCustomDelimiter));
             }
 
             var customDelimiter = GetCustomDelimiter(nonVariableSizeCustomDelimitedInput).ToArray();
-            var delimiters = _builtInDelimiters.Union(customDelimiter).ToArray();
+            var delimiters = _builtInDelimiters
+                                .Union(new []{_configuration.AlternateDelimiter})
+                                .Union(customDelimiter).ToArray();
             calcTerms = calcTerms.SelectMany(s => s.Split(delimiters));
 
             var termValues = calcTerms.Select(s => s.ToInt()).ToArray();
@@ -62,7 +72,7 @@ namespace CalculatorService
             if (valid)
                 throw new InvalidOperationException($"Invalid negative numbers: {string.Join(", ", termList.Select(i => i.ToString()))}");
 
-            return termList.ToArray(); 
+            return termList.ToArray();
         }
 
         private IEnumerable<char> GetCustomDelimiter(string delimitedInput)
@@ -99,17 +109,24 @@ namespace CalculatorService
 
         }
 
-        private readonly char[] _builtInDelimiters = { ',', '\n' };
+        private readonly char[] _builtInDelimiters = { ',' };
         private readonly string _customDelimiterToken = "//";
         private readonly string _variableLengthDelimiterPattern = @"^\/\/(\[[^\[\]]+\])+";
         private readonly string _variableLengthDelimiterValuePattern = @"[^\[\]\/]+";
 
         private (bool Valid, IEnumerable<int> termList) ValidateTerms(IEnumerable<int> calcTerms)
         {
+            var negativeTerms = new int[] { };
+            var distinctNegativeTerms = new int[] { };
             var terms = calcTerms.ToArray();
-            var negativeTerms = terms.Where(t => t < 0).ToArray();
-            var distinctNegativeTerms = negativeTerms.Distinct().ToArray();
-            var validTerms = terms.Select(t => t <= 1000 ? t : 0).ToArray();
+            if (_configuration.AllowNegativeNumbers == false)
+            {
+                negativeTerms = terms.Where(t => t < 0).ToArray();
+                distinctNegativeTerms = negativeTerms.Distinct().ToArray();
+                terms = terms.Except(distinctNegativeTerms).ToArray();
+            }
+
+            var validTerms = terms.Select(t => t <= _configuration.MaxNumber ? t : 0).ToArray();
             return negativeTerms.Any() ? (true, distinctNegativeTerms) : (false, validTerms);
         }
 

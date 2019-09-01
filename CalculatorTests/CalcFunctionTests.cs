@@ -9,7 +9,7 @@ namespace CalculatorTests
         private CalculationCoordinator calculator;
         public CalcFunctionTests()
         {
-            calculator = new CalculationCoordinator();
+            calculator = new CalculationCoordinator(new CalculatorConfiguration());
         }
 
         // Step 1

@@ -13,21 +13,22 @@ namespace Calculator
 
         static void Main(string[] args)
         {
+            var configuration = new CalculatorConfiguration();
+            var builder = new ConfigurationBuilder();
+            builder.ProcessConfiguration(args, configuration);
+            var calculator = new CalculationCoordinator(configuration);
+
             Console.WriteLine(ExitPrompt);
             while (true)
             {
                 Console.WriteLine(Prompt);
                 var promptResponse = Console.ReadLine();
 
-                var calculator = new CalculationCoordinator();
                 var result = calculator.Add(promptResponse);
 
-                if (result.Status == CalculationStatus.Ok)
-                    Console.WriteLine(result.Formula);
-                else
-                {
-                    Console.WriteLine(result.CalculationException.Message);
-                }
+                Console.WriteLine(result.Status == CalculationStatus.Ok
+                    ? result.Formula
+                    : result.CalculationException.Message);
             }
         }
     }
