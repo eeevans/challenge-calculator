@@ -39,8 +39,12 @@ namespace CalculatorService
         private IEnumerable<int> ParseCalcArgs(string delimitedInput)
         {
             IEnumerable<string> calcTerms = new []{delimitedInput};
-            var (variableSizeCustomDelimiter, nonVariableSizeCustomDelimitedInput) = GetVariableLengthDelimiter(delimitedInput);
-            calcTerms = nonVariableSizeCustomDelimitedInput.Split(variableSizeCustomDelimiter);
+            var (variableSizeCustomDelimiters, nonVariableSizeCustomDelimitedInput) = GetVariableLengthDelimiters(delimitedInput);
+            calcTerms = new[] {nonVariableSizeCustomDelimitedInput};
+            foreach (var variableSizeCustomDelimiter in variableSizeCustomDelimiters)
+            {
+                calcTerms = calcTerms.SelectMany(s => s.Split(variableSizeCustomDelimiter));
+            }
 
             var customDelimiter = GetCustomDelimiter(nonVariableSizeCustomDelimitedInput).ToArray();
             var delimiters = _builtInDelimiters.Union(customDelimiter).ToArray();
@@ -57,28 +61,41 @@ namespace CalculatorService
 
         private IEnumerable<char> GetCustomDelimiter(string delimitedInput)
         {
-            var variableLengthDelimiter = GetVariableLengthDelimiter(delimitedInput);
+            var variableLengthDelimiter = GetVariableLengthDelimiters(delimitedInput);
             return delimitedInput.StartsWith(_customDelimiterToken)
                 ? delimitedInput.Substring(_customDelimiterToken.Length, 1).ToCharArray()
                 : Enumerable.Empty<char>();
         }
 
-        private (string customDelimiter, string nonCustomDelimitedInput) GetVariableLengthDelimiter(string delimitedInput)
+        private (IEnumerable<String> customDelimiters, string nonCustomDelimitedInput) GetVariableLengthDelimiters(string delimitedInput)
         {
-            var pattern = new Regex(_variableLengthDelimiterPattern);
-            var match = pattern.Match(delimitedInput);
-            if (match.Success == false)
-                return (String.Empty, delimitedInput);
+            var variableLengthCustomDelimiters = new List<string>();
+            var variableLengthDelimiterPatternRegex = new Regex(_variableLengthDelimiterPattern);
+            var variableLengthDelimiterMatch = variableLengthDelimiterPatternRegex.Match(delimitedInput);
+            if (!variableLengthDelimiterMatch.Success == true)
+                return (Enumerable.Empty<string>(), delimitedInput);
 
-            var delimiterPattern = new Regex(_variableLengthDelimiterValuePattern);
-            var valueMatch = delimiterPattern.Match(match.Value);
-            return valueMatch.Success == true ? (valueMatch.Value, delimitedInput.Replace(match.Value, string.Empty))
-                : (string.Empty, delimitedInput);
+            var variableLengthDelimiterValueRegex = new Regex(_variableLengthDelimiterValuePattern);
+            var variableLengthDelimiterValueMatches = variableLengthDelimiterValueRegex.Matches(variableLengthDelimiterMatch.Value);
+            if (variableLengthDelimiterValueMatches.Count > 0)
+            {
+                var valuePattern = new Regex(_variableLengthDelimiterValuePattern);
+                foreach (var valuePatternMatch in variableLengthDelimiterValueMatches)
+                {
+                    var valueMatch = valuePattern.Match(valuePatternMatch.ToString());
+                    if (valueMatch.Success == true)
+                        variableLengthCustomDelimiters.Add(valueMatch.Value);
+                }
+            }
+
+            return (variableLengthCustomDelimiters, delimitedInput.Replace(variableLengthDelimiterMatch.Value, string.Empty));
+
+
         }
 
         private readonly char[] _builtInDelimiters = { ',', '\n' };
         private readonly string _customDelimiterToken = "//";
-        private readonly string _variableLengthDelimiterPattern = @"\/\/\[[^\[\]]+\]";
+        private readonly string _variableLengthDelimiterPattern = @"^\/\/(\[[^\[\]]+\])+";
         private readonly string _variableLengthDelimiterValuePattern = @"[^\[\]\/]+";
 
         private (bool Valid, IEnumerable<int> termList) ValidateTerms(IEnumerable<int> calcTerms)
