@@ -16,7 +16,7 @@ namespace CalculatorService
         {
 
         }
-            
+
         public char AlternateDelimiter { get; set; }
         public bool AllowNegativeNumbers { get; set; }
         public int MaxNumber { get; set; }

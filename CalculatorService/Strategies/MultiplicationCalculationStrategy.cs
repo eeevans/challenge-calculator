@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using CalculatorService.Contracts;
+using System.Collections.Generic;
 using System.Linq;
-using CalculatorService.Contracts;
 
 namespace CalculatorService.Strategies
 {
@@ -29,7 +29,7 @@ namespace CalculatorService.Strategies
                 }
             }
 
-            return new CalculationResult(product, GetCalculationFormula(multiplicands , product));
+            return new CalculationResult(product, GetCalculationFormula(multiplicands, product));
         }
 
         private string GetCalculationFormula(int[] multiplicands, int product)

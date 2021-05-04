@@ -1,13 +1,14 @@
 ﻿using CalculatorService.Contracts;
-using StructureMap;
+using Lamar;
 
 namespace CalculatorService
 {
-    public class CalculatorServiceRegistry : Registry
+    public class CalculatorServiceRegistry : ServiceRegistry
     {
         public CalculatorServiceRegistry()
         {
             For(typeof(IStrategyChooser<>)).Use(typeof(StrategyChooser<>));
+            For<IConfigurationBuilder>().Use(new ConfigurationBuilder());
             Scan(_ =>
                 {
                     _.AssemblyContainingType<CalculatorServiceRegistry>();
@@ -15,6 +16,7 @@ namespace CalculatorService
                     _.WithDefaultConventions();
                 }
             );
+            For<ICalculatorConfiguration>().Use(new CalculatorConfiguration()).Singleton();
         }
     }
 }

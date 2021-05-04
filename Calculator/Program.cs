@@ -1,17 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using CalculatorService;
+﻿using CalculatorService;
 using CalculatorService.Contracts;
 using CalculatorService.Primatives;
-using StructureMap;
+using Lamar;
+using System;
+using System.Xml.Xsl;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Calculator
 {
     class Program
     {
         private const string ExitPrompt = "Press Ctrl-C to Exit";
-        private const string Prompt = "Enter numbers to add separated by a comma or newline (ex. 2,2):";
+        private const string Prompt = "Enter numbers to add separated by a comma or {0} (ex. 2,2):";
 
         static void Main(string[] args)
         {
@@ -20,14 +20,13 @@ namespace Calculator
             var builder = container.GetInstance<IConfigurationBuilder>();
             if (builder.ProcessConfiguration(args, configuration) == false)
                 return;
-
-            var calculator = container.With<ICalculatorConfiguration>(configuration)
-                    .GetInstance<ICalculationCoordinator>();
+            container.Configure(c => c.AddSingleton<ICalculatorConfiguration>(configuration));
+            var calculator = container.GetInstance<ICalculationCoordinator>();
 
             Console.WriteLine(ExitPrompt);
             while (true)
             {
-                Console.WriteLine(Prompt);
+                Console.WriteLine(string.Format(Prompt, configuration.AlternateDelimiter == '\n' ? "newline" : $"'{configuration.AlternateDelimiter}'"));
                 var promptResponse = Console.ReadLine();
 
                 var result = calculator.Calculate(promptResponse);

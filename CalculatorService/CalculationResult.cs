@@ -1,5 +1,5 @@
-﻿using System;
-using CalculatorService.Primatives;
+﻿using CalculatorService.Primatives;
+using System;
 
 namespace CalculatorService
 {

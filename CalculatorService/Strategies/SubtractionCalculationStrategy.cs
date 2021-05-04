@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using CalculatorService.Contracts;
+using System.Collections.Generic;
 using System.Linq;
-using CalculatorService.Contracts;
 
 namespace CalculatorService.Strategies
 {
@@ -13,7 +13,7 @@ namespace CalculatorService.Strategies
 
         public CalculationResult Calculate(IEnumerable<int> terms)
         {
-            var subtrahends= terms.ToArray();
+            var subtrahends = terms.ToArray();
             var difference = 0;
             bool hasInitialized = false;
             foreach (var term in terms)

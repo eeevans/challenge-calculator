@@ -1,6 +1,6 @@
-﻿using System;
+﻿using CalculatorService.Contracts;
+using System;
 using System.Collections.Generic;
-using CalculatorService.Contracts;
 
 namespace CalculatorService
 {

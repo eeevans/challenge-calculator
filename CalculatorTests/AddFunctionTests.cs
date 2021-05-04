@@ -1,6 +1,5 @@
 ﻿using CalculatorService;
 using CalculatorService.Primatives;
-using StructureMap;
 using Xunit;
 
 namespace CalculatorTests

@@ -1,6 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using CalculatorService.Contracts;
+using System.Collections.Generic;
 using System.Linq;
-using CalculatorService.Contracts;
 
 namespace CalculatorService.Strategies
 {

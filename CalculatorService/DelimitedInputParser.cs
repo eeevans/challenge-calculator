@@ -1,9 +1,9 @@
-﻿using System;
+﻿using CalculatorService.Contracts;
+using CalculatorService.Core.Extensions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CalculatorService.Contracts;
-using CalculatorService.Core.Extensions;
 
 namespace CalculatorService
 {

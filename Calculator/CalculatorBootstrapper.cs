@@ -1,5 +1,5 @@
 ﻿using CalculatorService;
-using StructureMap;
+using Lamar;
 
 namespace Calculator
 {
@@ -7,8 +7,7 @@ namespace Calculator
     {
         public IContainer Configure()
         {
-            var container = new Container();
-            container.Configure(c => c.AddRegistry(new CalculatorServiceRegistry()));
+            var container = new Container(new CalculatorServiceRegistry());
 
             return container;
         }
